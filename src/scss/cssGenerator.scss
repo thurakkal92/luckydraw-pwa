@@ -1,0 +1,262 @@
+@function config($key) {
+	@return map-get($config, $key);
+}
+
+@mixin break($size) {
+	@media screen and (min-width: map-get(config('breakPoints'), $size)) and (max-width: '1024px') {
+		@content; 
+	}
+}
+
+@each $bw in map-get(config('borders'), 'borderWidth') {
+	.bw-#{$bw} {
+		border-width: $bw + px;
+	}
+}
+
+@each $br in map-get(config('borders'), 'borderRadius') {
+	.br-#{$br} {
+		border-radius: $br + px;
+	}
+}
+
+@each $bs in map-get(config('borders'), 'style') {
+	.br-#{$bs} {
+		border-style: $bs;
+	}
+}
+
+.bn {
+	border-style: none;
+}
+
+.ba {
+	border-style: solid;
+}
+
+.bb {
+	border-bottom-style: solid;
+}
+
+.bt {
+	border-top-style: solid;
+}
+
+.br {
+	border-right-style: solid;
+}
+
+.bl {
+	border-left-style: solid;
+}
+
+@each $fs, $val in map-get(config('typography'), 'fontSize') {
+	.fs-#{$fs} {
+		font-size: nth($val, 1);
+		line-height: nth($val, 2);
+	}
+}
+
+@each $fw in map-get(config('typography'), 'fontWeight') {
+	.fw-#{$fw} {
+		font-weight: $fw;
+	}
+}
+
+@each $ta, $value in map-get(config('typography'), 'align') {
+	.ta-#{$ta} {
+		text-align: $value;
+	}
+}
+
+@each $color, $value in config('colors') {
+	.bg-#{$color} {
+		background-color: #{$value};
+	}
+	.bc-#{$color} {
+		border-color: #{$value};
+	}
+	.c-#{$color} {
+		color: #{$value};
+	}
+	.hover\:bc-#{$color} {
+		&:hover {
+			border-color: $value;
+		}
+	}
+	.hover\:bg-#{$color} {
+		&:hover {
+			background-color: $value;
+		}
+	}
+	.hover\:c-#{$color} {
+		&:hover {
+			color: $value;
+		}
+	}
+}
+
+@each $property, $value in config('display') {
+	.d-#{$property} {
+		display: #{$value};
+	}
+}
+
+@each $property, $value in config('position') {
+	.p-#{$property} {
+		position: #{$value};
+	}
+}
+
+@each $space in config('spacers') {
+	.mt-#{$space} {
+		margin-top: #{$space * 4}px;
+	}
+	.ml-#{$space} {
+		margin-left: #{$space * 4}px;
+	}
+	.mr-#{$space} {
+		margin-right: #{$space * 4}px;
+	}
+	.mb-#{$space} {
+		margin-bottom: #{$space * 4}px;
+	}
+	.m-#{$space} {
+		margin: #{$space * 4}px;
+	}
+
+	.pt-#{$space} {
+		padding-top: #{$space * 4}px;
+	}
+	.pl-#{$space} {
+		padding-left: #{$space * 4}px;
+	}
+	.pr-#{$space} {
+		padding-right: #{$space * 4}px;
+	}
+	.pb-#{$space} {
+		padding-bottom: #{$space * 4}px;
+	}
+	.p-#{$space} {
+		padding: #{$space * 4}px;
+	}
+	.px-#{$space} {
+		padding-right: #{$space * 4}px;
+		padding-left: #{$space * 4}px;
+	}
+	.py-#{$space} {
+		padding-top: #{$space * 4}px;
+		padding-bottom: #{$space * 4}px;
+	}
+	.my-#{$space} {
+		margin-top: #{$space * 4}px;
+		margin-bottom: #{$space * 4}px;
+	}
+	.mx-#{$space} {
+		margin-left: #{$space * 4}px;
+		margin-right: #{$space * 4}px;
+	}
+}
+
+@each $height in map-get(config('dimensions'), 'height') {
+	.h-#{$height} {
+		height: #{$height * 4}px;
+	}
+}
+
+@each $width, $value in map-get(config('dimensions'), 'width') {
+	.w-#{$width} {
+		width: #{$value};
+	}
+}
+
+//Grid
+
+.container {
+	max-width: map-get(config('grid'), 'gridWidth');
+	margin: 0 auto;
+	padding: 0 map-get(config('grid'), 'gutterWidth');
+	max-width: 360px;
+}
+
+.row {
+	display: flex;
+	flex: 0 1 auto;
+	flex-direction: row;
+	flex-wrap: wrap;
+	margin-right: -1 * map-get(config('grid'), 'gutterWidth') * 0.5;
+	margin-left: -1 * map-get(config('grid'), 'gutterWidth') * 0.5;
+}
+
+%col {
+	flex: 0 0 auto;
+	padding-right: map-get(config('grid'), 'gutterWidth') * 0.5;
+	padding-left: map-get(config('grid'), 'gutterWidth') * 0.5;
+}
+
+.col {
+	@extend %col;
+	flex-grow: 1;
+	flex-basis: 0;
+	max-width: 100%;
+}
+
+@for $i from 1 through map-get(config('grid'), 'gridColumns') {
+	.col-#{$i} {
+		@extend %col;
+		flex-basis: percentage($i / map-get(config('grid'), 'gridColumns'));
+		max-width: percentage($i / map-get(config('grid'), 'gridColumns'));
+	}
+}
+
+@each $zIndex in config('zIndex') {
+	.z-#{$zIndex} {
+		z-index: $zIndex;
+	}
+}
+
+.c-pointer {
+	cursor: pointer;
+}
+
+//responsive css starts here
+
+@each $breakpoint, $value in config('breakPoints') {
+	@for $i from 1 through map-get(config('grid'), 'gridColumns') {
+		@include break($breakpoint) {
+			.col-#{$i}--#{$breakpoint} {
+				padding-right: map-get(config('grid'), 'gutterWidth') * 0.5;
+				padding-left: map-get(config('grid'), 'gutterWidth') * 0.5;
+				flex-basis: percentage($i / map-get(config('grid'), 'gridColumns'));
+				max-width: percentage($i / map-get(config('grid'), 'gridColumns'));
+			}
+		}
+	}
+
+	@include break($breakpoint) {
+		.flex--#{$breakpoint} {
+			display: flex;
+		}
+
+		@each $property, $value in config('display') {
+			.d-#{$property}--#{$breakpoint} {
+				display: #{$value};
+			}
+		}	
+
+		@each $space in config('spacers') {
+			.py-#{$space}--#{$breakpoint} {
+				padding-top: #{$space * 4}px;
+				padding-bottom: #{$space * 4}px;
+			}
+			.px-#{$space}--#{$breakpoint} {
+				padding-right: #{$space * 4}px;
+				padding-left: #{$space * 4}px;
+			}
+			.mr-#{$space}--#{$breakpoint} {
+				margin-right: #{$space * 4}px;
+			}
+		}
+	}	
+}
+
