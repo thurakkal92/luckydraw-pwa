@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import size from 'utils/size';
-import {SHEET_ID} from 'constants/sheetConstants'
+import { SHEET_ID } from 'constants/sheetConstants';
 
 import { ReactComponent as BgArrow } from 'assets/icons/bg-arrow.svg';
 import { ReactComponent as Triangle } from 'assets/icons/triangle.svg';
@@ -12,13 +12,15 @@ function SpinnerWheel(props) {
 	const { dataList, weelSize } = props;
 	let rotateDeg = 360 / dataList.length;
 	const [wheelRotate, setWheelRotate] = useState(0);
-	
-	let tempPos = 0
+	const [updateSuccess, setUpdateSuccess] = useState(false);
+	let tempPos = 0;
 	function spin() {
-		let pos = Math.floor(Math.random() * dataList.length + 1)
-		let posRotateDeg = pos * rotateDeg + 1440
-		posRotateDeg = posRotateDeg - (tempPos*rotateDeg)
-		tempPos = pos
+		let pos = Math.floor(Math.random() * dataList.length + 1);
+		let posRotateDeg = pos * rotateDeg + 1440;
+		posRotateDeg = posRotateDeg - tempPos * rotateDeg;
+		tempPos = pos;
+		if(pos === 8) 
+			pos = 0
 		setWheelRotate(posRotateDeg);
 
 		const reqBody = {
@@ -27,20 +29,26 @@ function SpinnerWheel(props) {
 			valueInputOption: 'USER_ENTERED',
 			resource: {
 				values: [[Date(), `Name placeholder ${pos}`, dataList[pos].value]],
-			}
+			},
 		};
-		
+
 		postSpinValues(reqBody);
 	}
 
 	async function postSpinValues(reqBody) {
 		try {
 			const res = await apiPostHelper('postSpinnerValues', reqBody);
-			if(res.data === 'OK') {
-				
+			if (res.data === 'OK') {
+				setUpdateSuccess(true);
+				setTimeout(()=> {
+					setUpdateSuccess(false);
+				}, 2000)
+			} else {
+				setUpdateSuccess(false);
 			}
 		} catch (e) {
 			console.log(e);
+			setUpdateSuccess(false);
 		}
 	}
 
@@ -62,7 +70,7 @@ function SpinnerWheel(props) {
 				<motion.div
 					// initial={{ rotate: rotateDeg/2 }}
 					animate={{
-						rotate: [0, -wheelRotate - (rotateDeg/2)],
+						rotate: [0, -wheelRotate - rotateDeg / 2],
 					}}
 					transition={{
 						damping: 10,
@@ -125,6 +133,17 @@ function SpinnerWheel(props) {
 			</div>
 			<div className='pt-6' />
 			<BgArrow />
+			{updateSuccess && (
+				<motion.div
+					initial={{ opacity: 0, y: 50, scale: 0.3 }}
+					animate={{ opacity: 1, y: 0, scale: 1 }}
+					exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.2 } }}
+					className='br-4 bg-success-500 p-fixed px-10 py-3'
+					style={{ bottom: '24px', left: 0, right: 0, maxWidth: '340px', width: '85%', margin: '0 auto' }}
+				>
+					<p className='fs-4 fw-600 c-white'>Updated successfully!!!</p>
+				</motion.div>
+			)}
 		</>
 	);
 }
