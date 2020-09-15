@@ -219,6 +219,18 @@
 	cursor: pointer;
 }
 
+.o-hidden{
+	overflow: hidden;
+}
+.bw-1{
+	border-width: 1px;
+	border-style: solid;
+}
+.bw-2{
+	border-width: 2px;
+	border-style: solid;
+}
+
 //responsive css starts here
 
 @each $breakpoint, $value in config('breakPoints') {
