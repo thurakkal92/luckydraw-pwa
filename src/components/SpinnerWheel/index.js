@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 import size from 'utils/size';
 import {SHEET_ID} from 'constants/sheetConstants'
 
@@ -80,6 +80,7 @@ function SpinnerWheel(props) {
 				>
 					{dataList.map((list, idx) => (
 						<div
+							key={idx}
 							className='spinner-wheel__leaf p-absolute t-0 r-0 o-hidden'
 							style={{
 								transform: `rotate(${idx * rotateDeg}deg) skewY(${-rotateDeg}deg)`,

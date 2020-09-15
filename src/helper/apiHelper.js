@@ -1,22 +1,8 @@
 import axios from 'axios';
-import { isEmpty } from 'utils/isEmpty';
 
-export const apiPostHelper = async (URL, PAYLOAD, contentType, requestHeaders) => {
+export const apiPostHelper = async (URL, PAYLOAD) => {
 	try {
-		let contentTypeText = 'application/json';
-		if (contentType) {
-			contentTypeText = contentType;
-		}
-		let headers = {
-			'Access-Control-Allow-Origin': '*',
-			'Content-Type': contentTypeText,
-		};
-		if (!isEmpty(requestHeaders)) {
-			headers = {
-				...headers,
-				...requestHeaders,
-			};
-		}
+
 		let url = `https://gs-api-server.herokuapp.com/${URL}`;
 
 		const responseData = await axios.post(url, PAYLOAD, {
